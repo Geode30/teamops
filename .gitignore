@@ -1,0 +1,90 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# virtual environments
+venv/
+env/
+.env/
+.venv/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+
+# media & static (if locally generated)
+media/
+staticfiles/
+
+# Django migrations (ONLY if you intentionally want to ignore them — usually NOT recommended)
+# */migrations/*.pyc
+# */migrations/__pycache__/
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# IDEs / Editors
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Testing / coverage
+# =========================
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# =========================
+# Django REST Framework / API extras
+# =========================
+# API docs build outputs (if using drf-spectacular / swagger builds locally)
+schema.yaml
+schema.json
+
+# Postman / API clients
+*.postman_collection.json
+
+# =========================
+# Celery (if used)
+# =========================
+celerybeat-schedule
+celerybeat.pid
+
+# =========================
+# Docker (if used)
+# =========================
+docker-compose.override.yml
+
+# =========================
+# Node (if frontend exists)
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+build/
+
+####
+docker-compose.yml
