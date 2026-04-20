@@ -9,17 +9,23 @@ def login_service(user):
 
     return access_token, refresh_token
 
-def signup_service(username, password):
-    user = User.objects.create_user(
-        username=username, 
-        password=password
-    )
+def signup_service(username, password, first_name, last_name):
+    first_name = first_name.title()
+    last_name = last_name.title()
+
+    user = User(first_name=first_name, last_name=last_name, username=username)
+    user.set_password(password)
+    user.save()
 
     refresh = RefreshToken.for_user(user)
 
     return {
-        "user_id": user.id,
-        "username": user.username,
+        "user": {
+            "user_id": user.id,
+            "username": user.username,
+            "first_name": first_name,
+            "last_name": last_name,
+        },
         "tokens": {
             "access": str(refresh.access_token),
             "refresh": str(refresh),
@@ -30,4 +36,3 @@ def update_credentials_service(user: User, username, password):
     user.username = username
     user.set_password(password)
     user.save()
-    

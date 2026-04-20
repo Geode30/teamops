@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers
 
 from authentication.models import User
-from authentication.utils import validate_username
+from authentication.utils import validate_username, is_valid_person_name
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=50)
@@ -31,6 +31,12 @@ class SignupSerializer(serializers.Serializer):
 
     def validate_username(self, value):
         return validate_username(value)
+    
+    def validate_last_name(self, value):
+        return is_valid_person_name(value)
+    
+    def validate_first_name(self, value):
+        return is_valid_person_name(value)
 
 class UpdateCredentialsSerializer(serializers.Serializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(date_deleted__isnull=True))

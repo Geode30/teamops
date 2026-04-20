@@ -5,6 +5,7 @@ from rest_framework import serializers
 import re
 
 USERNAME_PATTERN = r"[A-Za-z0-9_]+"
+PERSON_NAME_PATTERN = r"^[A-Za-z]+(?:[' ][A-Za-z]+)*$"
 
 def validate_username(value, is_update=False):
     if not is_update:
@@ -18,7 +19,7 @@ def validate_username(value, is_update=False):
 
     if "__" in value:
         raise serializers.ValidationError(
-            "Username cannot have a consecutive underscore"
+            "Username cannot have consecutive underscores"
         )
 
     if value.startswith("_") or value.endswith("_"):
@@ -27,3 +28,12 @@ def validate_username(value, is_update=False):
         )
 
     return value
+
+def is_valid_person_name(name):
+    if not re.fullmatch(PERSON_NAME_PATTERN, name):
+        raise serializers.ValidationError(
+            "Name cannot have numbers and symbols aside apostrophe"
+        )
+    
+    return name
+    
