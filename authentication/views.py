@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 
 from authentication.models import User
 from authentication.serializers import LoginSerializer, SignupSerializer, UserSerializer, UpdateCredentialsSerializer
-from authentication.services import login_service, signup_service, update_credentials_service
+from authentication.services import login_service, logout_service, signup_service, update_credentials_service, token_refresh_service
 
 # Create your views here.
 
@@ -19,11 +19,65 @@ class LoginView(APIView):
         user = login_serializer.validated_data["user"]
         
         access, refresh = login_service(user)
-
-        return Response({
-            "access": access,
-            "refresh": refresh
+        response = Response({
+            "access": access
         }, status=status.HTTP_200_OK)
+
+        response.set_cookie(
+            key="refresh",
+            value=refresh,
+            httponly=True,
+            secure=True,
+            samesite="None"
+        )
+        return response
+
+class LogoutView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        refresh_token = request.COOKIES.get("refresh")
+
+        if refresh_token:
+            logout_service(refresh_token)
+
+        response = Response(
+            {"message": "Logged out successfully"},
+            status=status.HTTP_200_OK
+        )
+
+        return response
+
+class TokenRefreshView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        refresh_token = request.COOKIES.get("refresh")
+
+        if not refresh_token:
+            return Response(
+                {"message": "Refresh token not found in cookies"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        data = token_refresh_service(refresh_token)
+
+        if data["error"]:
+            return Response(
+                {"message": data["error"]},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        response = Response({"access": data["access"]}, status=status.HTTP_200_OK)
+        response.set_cookie(
+            key="refresh",
+            value=data["refresh"],
+            httponly=True,
+            secure=True,
+            samesite="None"
+        )
+        return response
 
 class SignupView(APIView):
     permission_classes = []
@@ -70,4 +124,11 @@ class UserViewSet(
 ):
     queryset = User.objects.filter(date_deleted__isnull=True)
     serializer_class = UserSerializer
+
+class CurrentUserView(APIView):
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user)
+        print(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         

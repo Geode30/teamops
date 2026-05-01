@@ -28,6 +28,7 @@ class SignupSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=30)
     last_name = serializers.CharField(max_length=30)
     password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
 
     def validate_username(self, value):
         return validate_username(value)
@@ -37,6 +38,14 @@ class SignupSerializer(serializers.Serializer):
     
     def validate_first_name(self, value):
         return is_valid_person_name(value)
+    
+    def validate(self, data):
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError({
+                "message": "Passwords do not match"
+            })
+        
+        return data
 
 class UpdateCredentialsSerializer(serializers.Serializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(date_deleted__isnull=True))

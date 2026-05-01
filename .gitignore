@@ -89,3 +89,4 @@ build/
 ####
 docker-compose.yml
 /requests
+rebuild.sh

@@ -17,7 +17,7 @@ class Project(TimeStampedModel):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.ACTIVE)
-    priority = models.CharField(max_length=10, choices=Priority.choices, default=Priority.choices)
+    priority = models.CharField(max_length=10, choices=Priority.choices, default=Priority.LOW)
     date_completed = models.DateTimeField(blank=True, null=True)
     deadline = models.DateTimeField(blank=True, null=True)
 

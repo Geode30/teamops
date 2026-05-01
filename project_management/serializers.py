@@ -28,3 +28,8 @@ class ProjectSerializer(serializers.ModelSerializer):
     
     def get_created_by_name(self, obj):
         return f"{obj.created_by.last_name}, {obj.created_by.first_name}"
+    
+class ProjectIDandNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ["id", "name"]
