@@ -51,9 +51,18 @@ class UpdateCredentialsSerializer(serializers.Serializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(date_deleted__isnull=True))
     username = serializers.CharField(max_length=50)
     password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
 
     def validate_username(self, value):
         return validate_username(value, is_update=True)
+    
+    def validate(self, data):
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError({
+                "message": "Passwords do not match"
+            })
+        
+        return data
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

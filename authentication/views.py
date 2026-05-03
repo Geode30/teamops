@@ -3,6 +3,8 @@ from rest_framework import status, mixins, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from datetime import timedelta
+
 from authentication.models import User
 from authentication.serializers import LoginSerializer, SignupSerializer, UserSerializer, UpdateCredentialsSerializer
 from authentication.services import login_service, logout_service, signup_service, update_credentials_service, token_refresh_service
@@ -28,7 +30,8 @@ class LoginView(APIView):
             value=refresh,
             httponly=True,
             secure=True,
-            samesite="None"
+            samesite="None",
+            max_age=timedelta(days=1)
         )
         return response
 
@@ -75,7 +78,8 @@ class TokenRefreshView(APIView):
             value=data["refresh"],
             httponly=True,
             secure=True,
-            samesite="None"
+            samesite="None",
+            max_age=timedelta(days=1)
         )
         return response
 
