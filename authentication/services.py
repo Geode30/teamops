@@ -41,8 +41,7 @@ def signup_service(username, password, first_name, last_name):
             "last_name": last_name,
         },
         "tokens": {
-            "access": str(refresh.access_token),
-            "refresh": str(refresh),
+            "access": str(refresh.access_token)
         }
     }
 

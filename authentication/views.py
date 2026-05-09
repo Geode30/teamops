@@ -48,6 +48,7 @@ class LogoutView(APIView):
             {"message": "Logged out successfully"},
             status=status.HTTP_200_OK
         )
+        response.delete_cookie("refresh")
 
         return response
 
@@ -104,7 +105,7 @@ class SignupView(APIView):
 
 class UpdateCredentialsView(APIView):
     def put(self, request, id):
-        data = request.data
+        data = request.data.copy()
         data['user'] = id
         update_credentials_serializer = UpdateCredentialsSerializer(data=data)
         update_credentials_serializer.is_valid(raise_exception=True)
@@ -126,8 +127,15 @@ class UserViewSet(
     mixins.DestroyModelMixin, 
     viewsets.GenericViewSet
 ):
-    queryset = User.objects.filter(date_deleted__isnull=True)
     serializer_class = UserSerializer
+
+    def get_queryset(self):
+        qs = User.objects.filter(date_deleted__isnull=True)
+
+        if self.action == "list":
+            return qs.exclude(id=self.request.user.id)
+
+        return qs
 
 class CurrentUserView(APIView):
     def get(self, request):

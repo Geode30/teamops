@@ -69,3 +69,9 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         exclude = ['password']
         read_only_fields = ['username']
+    
+    def validate_last_name(self, value):
+        return is_valid_person_name(value)
+    
+    def validate_first_name(self, value):
+        return is_valid_person_name(value)

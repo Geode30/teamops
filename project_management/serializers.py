@@ -2,8 +2,7 @@ from django.utils import timezone
 
 from rest_framework import serializers
 
-from project_management.models import Project
-from project_management.utils import manila_to_utc
+from project_management.models import Project, Task, ProgressNote
 
 class ProjectSerializer(serializers.ModelSerializer):
     created_by_name = serializers.SerializerMethodField()
@@ -15,9 +14,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def validate_deadline(self, value):
         if value < timezone.now():
-            raise serializers.ValidationError({
-                "message": "Deadline cannot be in the past"
-            })
+            raise serializers.ValidationError("Deadline cannot be in the past")
         
         return value
 
@@ -33,3 +30,46 @@ class ProjectIDandNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ["id", "name"]
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = "__all__"
+        model = Task
+        read_only_fields = ['created_by', 'date_completed']
+
+    def validate(self, data):
+        project:Project = data["project"]
+
+        if project.date_completed:
+            raise serializers.ValidationError({
+                "message": "Cannot assign task to a completed project"
+            }) 
+
+        return data
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        validated_data['created_by'] = request.user
+        return super().create(validated_data)
+    
+class ProgressNoteSerializer(serializers.ModelSerializer):
+    task = serializers.PrimaryKeyRelatedField(queryset=Task.objects.filter(date_deleted__isnull=True))
+    class Meta:
+        fields = "__all__"
+        model = ProgressNote
+        read_only_fields = ['created_by']
+
+    def validate(self, data):
+        project:Project = data["task"].project
+
+        if project.date_completed:
+            raise serializers.ValidationError({
+                "message": "Cannot add a note to a completed project"
+            }) 
+
+        return data
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        validated_data['created_by'] = request.user
+        return super().create(validated_data)

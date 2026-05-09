@@ -4,8 +4,8 @@ from rest_framework import status, mixins, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from project_management.models import Project
-from project_management.serializers import ProjectSerializer, ProjectIDandNameSerializer
+from project_management.models import Project, Task, ProgressNote
+from project_management.serializers import ProjectSerializer, ProjectIDandNameSerializer, TaskSerializer, ProgressNoteSerializer
 
 # Create your views here.
 
@@ -30,3 +30,25 @@ class ProjectIDandNameView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         return Response([], status=status.HTTP_200_OK)
+
+class TaskViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin, 
+    mixins.ListModelMixin, 
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin, 
+    viewsets.GenericViewSet             
+):
+    queryset = Task.objects.filter(date_deleted__isnull=True)
+    serializer_class = TaskSerializer
+
+class ProgressNoteViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin, 
+    mixins.ListModelMixin, 
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin, 
+    viewsets.GenericViewSet
+):
+    queryset = ProgressNote.objects.filter(date_deleted__isnull=True)
+    serializer_class = ProgressNoteSerializer

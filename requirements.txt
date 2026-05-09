@@ -4,3 +4,8 @@ djangorestframework
 djangorestframework-simplejwt
 django-environ
 django-cors-headers
+pytest
+pytest-django
+factory_boy
+pytest-cov
+requests
