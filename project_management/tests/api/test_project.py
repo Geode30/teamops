@@ -27,8 +27,8 @@ def test_create_project_success(auth_client, user_for_testing):
     payload = {
         "name": "Test project",
         "description": "Test project",
-        "status": "active",
-        "priority": "low",
+        "status": Project.Status.ACTIVE,
+        "priority": Project.Priority.LOW,
         "deadline": "2026-05-30 13:00:00+08:00",
         "members": [user_for_testing.id]
     }

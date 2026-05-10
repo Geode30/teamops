@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from datetime import timedelta
 
 from authentication.models import User
-from authentication.serializers import LoginSerializer, SignupSerializer, UserSerializer, UpdateCredentialsSerializer
+from authentication.serializers import LoginSerializer, SignupSerializer, UserSerializer, UpdateCredentialsSerializer, UserIDandNameSerializer
 from authentication.services import login_service, logout_service, signup_service, update_credentials_service, token_refresh_service
 
 # Create your views here.
@@ -141,5 +141,11 @@ class CurrentUserView(APIView):
     def get(self, request):
         user = request.user
         serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserIDandNameView(APIView):
+    def get(self, request):
+        users = User.objects.filter(date_deleted__isnull=True).only('id', 'first_name', 'last_name')
+        serializer = UserIDandNameSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
         

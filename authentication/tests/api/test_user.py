@@ -76,3 +76,23 @@ def test_get_current_user(auth_client, user_for_testing):
 
     assert response.status_code == 200
     assert response.data["id"] == user_for_testing.id
+
+@pytest.mark.django_db
+def test_get_users_id_and_names(auth_client, user_for_testing, users_for_testing):
+    response = auth_client.get("/api/user_id_name/")
+
+    assert response.status_code == 200
+    assert isinstance(response.data, list)
+    users_for_testing.append(user_for_testing) # include user for testing because it is a user, it will be included in the query
+    expected = [
+        {
+            "id": user.id,
+            "full_name": user.full_name,
+        }
+        for user in users_for_testing
+    ]
+
+    assert sorted(response.data, key=lambda x: x["id"]) == sorted(
+            expected,
+            key=lambda x: x["id"],
+        )

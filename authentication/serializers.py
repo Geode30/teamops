@@ -75,3 +75,8 @@ class UserSerializer(serializers.ModelSerializer):
     
     def validate_first_name(self, value):
         return is_valid_person_name(value)
+
+class UserIDandNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'full_name']

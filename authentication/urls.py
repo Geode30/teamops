@@ -2,7 +2,7 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
-from authentication.views import LoginView, LogoutView, SignupView, UserViewSet, UpdateCredentialsView, TokenRefreshView, CurrentUserView
+from authentication.views import LoginView, LogoutView, SignupView, UserViewSet, UpdateCredentialsView, TokenRefreshView, CurrentUserView, UserIDandNameView
 
 router = DefaultRouter()
 router.register(r'user', UserViewSet, basename='user')
@@ -14,6 +14,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view()),
     path('signup/', SignupView.as_view()),
     path('me/user/', CurrentUserView.as_view()),
+    path('user_id_name/', UserIDandNameView.as_view()),
     path('update_credentials/<int:id>/', UpdateCredentialsView.as_view()),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

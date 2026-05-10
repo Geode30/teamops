@@ -24,7 +24,7 @@ class ProjectIDandNameView(APIView):
     def get(self, request):
         user = request.user
         user_filter = Q(created_by=user) | Q(members=user)
-        projects = Project.objects.filter(user_filter, date_deleted__isnull=True).distinct()
+        projects = Project.objects.only('id', 'name').filter(user_filter, date_deleted__isnull=True).distinct()
         if projects.exists():
             serializer = ProjectIDandNameSerializer(projects, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -39,8 +39,16 @@ class TaskViewSet(
     mixins.DestroyModelMixin, 
     viewsets.GenericViewSet             
 ):
-    queryset = Task.objects.filter(date_deleted__isnull=True)
     serializer_class = TaskSerializer
+
+    def get_queryset(self):
+        queryset = Task.objects.filter(date_deleted__isnull=True).select_related('assigned_to')
+        project = self.request.query_params.get('project')
+
+        if project:
+            queryset = queryset.filter(project=project)
+
+        return queryset
 
 class ProgressNoteViewSet(
     mixins.CreateModelMixin,

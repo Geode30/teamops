@@ -32,6 +32,8 @@ class ProjectIDandNameSerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
 class TaskSerializer(serializers.ModelSerializer):
+    assigned_to_full_name = serializers.ReadOnlyField(source='assigned_to.full_name')
+    
     class Meta:
         fields = "__all__"
         model = Task

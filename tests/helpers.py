@@ -4,12 +4,18 @@ def api_request(
     method,
     url,
     payload=None,
+    query_params=None,
     expected_status=200,
     format="json",
 ):
     request_method = getattr(client, method.lower())
 
-    response = request_method(url, payload, format=format)
+    method = method.lower()
+
+    if method == "get":
+        response = request_method(url, data=query_params)
+    else:
+        response = request_method(url, data=payload, format=format)
 
     assert response.status_code == expected_status
     return response
@@ -32,12 +38,13 @@ def assert_api_update(*, client, api, instance, payload, expected_status=200):
         expected_status=expected_status,
     )
 
-def assert_api_list(*, client, api, instances=None, expected_status=200):
+def assert_api_list(*, client, api, instances=None, query_params=None, expected_status=200):
     response = api_request(
         client=client,
         method="get",
         url=api,
         expected_status=expected_status,
+        query_params=query_params
     )
 
     assert isinstance(response.data, list)

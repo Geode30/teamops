@@ -63,5 +63,9 @@ class User(AbstractBaseUser, TimeStampedModel):
     def is_staff(self):
         return self.is_admin
     
+    @property
+    def full_name(self):
+        return f"{self.last_name}, {self.first_name}"
+    
     def delete(self, *args, **kwargs):
         self.soft_delete()
