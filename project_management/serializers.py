@@ -40,12 +40,13 @@ class TaskSerializer(serializers.ModelSerializer):
         read_only_fields = ['created_by', 'date_completed']
 
     def validate(self, data):
-        project:Project = data["project"]
+        if data.get('project'):
+            project:Project = data["project"]
 
-        if project.date_completed:
-            raise serializers.ValidationError({
-                "message": "Cannot assign task to a completed project"
-            }) 
+            if project.date_completed:
+                raise serializers.ValidationError({
+                    "message": "Cannot assign task to a completed project"
+                }) 
 
         return data
 
