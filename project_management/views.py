@@ -42,7 +42,7 @@ class TaskViewSet(
     serializer_class = TaskSerializer
 
     def get_queryset(self):
-        queryset = Task.objects.filter(date_deleted__isnull=True).select_related('assigned_to')
+        queryset = Task.objects.filter(date_deleted__isnull=True).select_related('assigned_to', 'created_by')
         project = self.request.query_params.get('project')
 
         if project:
@@ -58,5 +58,13 @@ class ProgressNoteViewSet(
     mixins.DestroyModelMixin, 
     viewsets.GenericViewSet
 ):
-    queryset = ProgressNote.objects.filter(date_deleted__isnull=True)
     serializer_class = ProgressNoteSerializer
+
+    def get_queryset(self):
+        queryset = ProgressNote.objects.filter(date_deleted__isnull=True).select_related('created_by')
+        task = self.request.query_params.get('task')
+
+        if task:
+            queryset = queryset.filter(task=task)
+
+        return queryset

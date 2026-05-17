@@ -33,6 +33,7 @@ class ProjectIDandNameSerializer(serializers.ModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
     assigned_to_full_name = serializers.ReadOnlyField(source='assigned_to.full_name')
+    created_by_full_name = serializers.ReadOnlyField(source='created_by.full_name')
     
     class Meta:
         fields = "__all__"
@@ -57,6 +58,8 @@ class TaskSerializer(serializers.ModelSerializer):
     
 class ProgressNoteSerializer(serializers.ModelSerializer):
     task = serializers.PrimaryKeyRelatedField(queryset=Task.objects.filter(date_deleted__isnull=True))
+    created_by_full_name = serializers.ReadOnlyField(source='created_by.full_name')
+
     class Meta:
         fields = "__all__"
         model = ProgressNote
