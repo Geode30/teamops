@@ -96,12 +96,9 @@ class SignupView(APIView):
         first_name  = signup_serializer.validated_data['first_name']
         last_name  = signup_serializer.validated_data['last_name']
 
-        data = signup_service(username, password, first_name, last_name)
+        signup_service(username, password, first_name, last_name)
 
-        return Response({
-            "message": "User created successfully",
-            **data
-        }, status=status.HTTP_201_CREATED)
+        return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
 
 class UpdateCredentialsView(APIView):
     def put(self, request, id):

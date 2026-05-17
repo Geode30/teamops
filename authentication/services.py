@@ -29,21 +29,7 @@ def signup_service(username, password, first_name, last_name):
     user.set_password(password)
     user.save()
 
-    update_last_login(None, user)
-
-    refresh = RefreshToken.for_user(user)
-
-    return {
-        "user": {
-            "user_id": user.id,
-            "username": user.username,
-            "first_name": first_name,
-            "last_name": last_name,
-        },
-        "tokens": {
-            "access": str(refresh.access_token)
-        }
-    }
+    return None
 
 def update_credentials_service(user: User, username, password):
     user.username = username
